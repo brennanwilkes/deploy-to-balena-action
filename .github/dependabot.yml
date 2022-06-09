@@ -12,3 +12,9 @@ updates:
     interval: weekly
   commit-message:
     prefix: patch
+- package-ecosystem: npm
+  directory: "/cli"
+  schedule:
+    interval: weekly
+  commit-message:
+    prefix: patch
