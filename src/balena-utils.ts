@@ -3,23 +3,7 @@ import { exec } from '@actions/exec';
 import { spawn } from 'child_process';
 import * as balena from 'balena-sdk';
 
-import { Release } from './types';
-
-type Tags = {
-	sha: string;
-	pullRequestId?: number;
-};
-
-type BuildOptions = {
-	noCache: boolean;
-	draft: boolean;
-	tags: Tags;
-};
-
-const DEFAULT_BUILD_OPTIONS: Partial<BuildOptions> = {
-	draft: true,
-	noCache: false,
-};
+import { Release, BuildOptions, DEFAULT_BUILD_OPTIONS, Tags } from './types';
 
 let sdk: ReturnType<typeof balena.getSdk> | null = null;
 
@@ -70,7 +54,7 @@ export async function push(
 		}
 	}
 
-	const pushOpt = [
+	let pushOpt = [
 		'push',
 		fleet,
 		'--source',
@@ -79,6 +63,14 @@ export async function push(
 		'balena-ci-commit-sha',
 		buildOpt.tags.sha,
 	];
+	if (buildOpt.env) {
+		pushOpt = [
+			...pushOpt,
+			...buildOpt.env
+				.map((env) => ['--env', env])
+				.reduce((acc, next) => [...acc, ...next], []),
+		];
+	}
 
 	if (buildOpt.tags.pullRequestId) {
 		pushOpt.push('balena-ci-id');

@@ -5,7 +5,7 @@ import * as versionbot from './versionbot-utils';
 import * as balena from './balena-utils';
 import * as git from './git';
 import * as github from './github-utils';
-import { Inputs, RepoContext } from './types';
+import { Inputs, RepoContext, BuildOptions } from './types';
 
 export async function run(
 	context: typeof contextType,
@@ -87,7 +87,7 @@ export async function run(
 		await git.checkout(versionbotBranch);
 	}
 
-	let buildOptions = null;
+	let buildOptions: Partial<BuildOptions> = {};
 
 	// If we are pushing directly to the target branch then just build a release without draft flag
 	if (context.eventName === 'push' && context.ref === `refs/heads/${target}`) {
@@ -114,12 +114,22 @@ export async function run(
 		};
 	}
 
+	buildOptions = {
+		...buildOptions,
+		noCache: inputs.layerCache === false,
+	};
+	if (inputs.environmentVariables) {
+		buildOptions.env = inputs.environmentVariables.split(',');
+	}
+
 	// Finally send source to builders
 	try {
-		releaseId = await balena.push(inputs.fleet, inputs.source, inputs.cache, {
-			...buildOptions,
-			noCache: inputs.layerCache === false,
-		});
+		releaseId = await balena.push(
+			inputs.fleet,
+			inputs.source,
+			inputs.cache,
+			buildOptions,
+		);
 	} catch (e: any) {
 		core.error(e.message);
 		throw e;

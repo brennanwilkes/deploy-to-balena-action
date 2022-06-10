@@ -8,6 +8,7 @@ export type Inputs = {
 	versionbot: boolean;
 	createTag: boolean;
 	layerCache: boolean;
+	environmentVariables?: string;
 };
 
 export type RepoContext = {
@@ -26,4 +27,21 @@ export type PullRequest = {
 export type Release = {
 	id: number;
 	isFinal: boolean;
+};
+
+export type Tags = {
+	sha: string;
+	pullRequestId?: number;
+};
+
+export type BuildOptions = {
+	noCache: boolean;
+	draft: boolean;
+	tags: Tags;
+	env?: string[];
+};
+
+export const DEFAULT_BUILD_OPTIONS: Partial<BuildOptions> = {
+	draft: true,
+	noCache: false,
 };

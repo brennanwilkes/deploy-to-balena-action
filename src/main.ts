@@ -25,6 +25,12 @@ const inputs: Inputs = {
 	githubToken: core.getInput('github_token', { required: false }),
 	layerCache: core.getBooleanInput('layer_cache', { required: false }),
 };
+const environmentVariables = core.getInput('environment_variables', {
+	required: false,
+});
+if (environmentVariables) {
+	inputs.environmentVariables = environmentVariables;
+}
 
 (async () => {
 	try {
