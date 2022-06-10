@@ -96,10 +96,12 @@ export async function run(
 			draft: false,
 			tags: { sha: context.sha },
 		};
-	} else if (
-		context.eventName !== 'pull_request' &&
-		context.eventName !== 'workflow_dispatch'
-	) {
+	} else if (context.eventName === 'workflow_dispatch') {
+		buildOptions = {
+			draft: true,
+			tags: { sha: context.sha },
+		};
+	} else if (context.eventName !== 'pull_request') {
 		// Make sure the only events now are Pull Requests
 		if (context.eventName === 'push') {
 			throw new Error(
@@ -108,7 +110,7 @@ export async function run(
 		}
 		throw new Error(`Unsure how to proceed with event: ${context.eventName}`);
 	} else {
-		// Make a draft release because context is PR workflow or is manual dispatch
+		// Make a draft release because context is PR workflow
 		buildOptions = {
 			tags: {
 				sha: repoContext.sha,
