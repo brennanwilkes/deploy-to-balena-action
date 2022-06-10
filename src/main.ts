@@ -28,7 +28,7 @@ const inputs: Inputs = {
 const environmentVariables = core.getInput('environment_variables', {
 	required: false,
 });
-if (environmentVariables) {
+if (environmentVariables && environmentVariables !== '') {
 	inputs.environmentVariables = environmentVariables;
 }
 

@@ -51,6 +51,9 @@ inputs:
     description: 'Image registry credentrials (Balena secrets.json)'
     required: false
     default: ''
+  environment_variables:
+    description: 'Environment variables in the form of KEY=VALUE,KEY2=VALUE2,...'
+    required: false
 outputs:
   release_id:
     description: 'ID of the release built'
